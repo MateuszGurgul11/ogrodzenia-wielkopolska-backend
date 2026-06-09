@@ -30,6 +30,19 @@ uvicorn app.main:app --reload --port 8000
 API: http://localhost:8000  
 Dokumentacja: http://localhost:8000/docs
 
+## Deploy na Render
+
+Repozytorium: `https://github.com/MateuszGurgul11/ogrodzenia-wielkopolska-backend`
+
+1. [Render Dashboard](https://dashboard.render.com) → **New** → **Blueprint** (lub Web Service z Docker).
+2. Połącz repozytorium GitHub — Render odczyta `render.yaml`.
+3. Ustaw zmienne środowiskowe:
+   - `FIREBASE_PROJECT_ID` = `ogrodzenia-wielkopolska`
+   - `FIREBASE_SERVICE_ACCOUNT_JSON` = cały JSON z Firebase Console (jedna linia)
+   - `CORS_ORIGINS` = `https://ogrodzenia-wielkopolska.vercel.app`
+4. Po deployu skopiuj URL usługi (np. `https://ogrodzenia-api.onrender.com`).
+5. W Vercel ustaw `NEXT_PUBLIC_API_URL` na ten URL i zrób redeploy frontendu.
+
 ## Endpointy
 
 | Metoda | Ścieżka | Auth |
