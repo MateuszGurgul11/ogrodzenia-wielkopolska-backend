@@ -21,6 +21,7 @@ class BaseEntity(BaseModel):
 class PostCreate(BaseEntity):
     slug: str = Field(min_length=1, pattern=r"^[a-z0-9-]+$")
     widthCm: float = Field(ge=10, le=50)
+    priceSurchargePerMeter: float = Field(ge=0, default=0)
 
 
 class PostOut(PostCreate):
@@ -31,6 +32,7 @@ class PanelCreate(BaseEntity):
     patternId: Literal[
         "pattern-solid", "pattern-lines", "pattern-grid", "pattern-brick"
     ]
+    priceSurchargePerMeter: float = Field(ge=0, default=0)
 
 
 class PanelOut(PanelCreate):
@@ -40,6 +42,7 @@ class PanelOut(PanelCreate):
 class SpacerCreate(BaseEntity):
     hasSpacer: bool
     openness: float = Field(ge=0, le=1)
+    priceSurchargePerMeter: float = Field(ge=0, default=0)
 
 
 class SpacerOut(SpacerCreate):
@@ -52,6 +55,7 @@ class HeightCreate(BaseModel):
     sortOrder: int = Field(ge=0, default=0)
     active: bool = True
     description: str | None = None
+    priceMultiplier: float = Field(ge=0.1, le=5, default=1.0)
 
 
 class HeightOut(HeightCreate):
@@ -60,6 +64,7 @@ class HeightOut(HeightCreate):
 
 class ColorCreate(BaseEntity):
     hex: str
+    priceSurchargePerMeter: float = Field(ge=0, default=0)
 
     @field_validator("hex")
     @classmethod

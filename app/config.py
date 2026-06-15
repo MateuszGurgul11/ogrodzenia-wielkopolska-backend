@@ -1,4 +1,8 @@
+import os
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_LOCAL_DEV_ORIGINS = ("http://localhost:3000", "http://localhost:3001")
 
 
 class Settings(BaseSettings):
@@ -16,7 +20,13 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+        origins = [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+        cred_path = self.google_application_credentials
+        if os.path.isfile(cred_path):
+            for origin in _LOCAL_DEV_ORIGINS:
+                if origin not in origins:
+                    origins.append(origin)
+        return origins
 
 
 settings = Settings()

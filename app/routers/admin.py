@@ -5,6 +5,8 @@ from fastapi import APIRouter, HTTPException
 from app.auth import AdminUser
 from app.models.catalog import COLLECTION_NAMES, CollectionName, CREATE_MODELS
 from app.services import catalog as catalog_service
+from app.services import pricing as pricing_service
+from app.services import pricing_migration as pricing_migration_service
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -19,7 +21,12 @@ def _validate_collection(name: str) -> CollectionName:
 async def seed(_user: AdminUser):
     try:
         counts = catalog_service.seed_catalog()
-        return {"message": "Dane przykładowe zostały dodane.", "counts": counts}
+        pricing_service.seed_pricing_settings()
+        pricing_counts = pricing_migration_service.apply_default_variant_prices()
+        return {
+            "message": "Dane przykładowe zostały dodane (w tym ustawienia i ceny wyceny).",
+            "counts": {**counts, **pricing_counts},
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
