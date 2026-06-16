@@ -146,12 +146,29 @@ SEED_DATA = {
             "active": True,
         },
     ],
+    "elements": [
+        {
+            "type": "brama",
+            "name": "Brama wjazdowa",
+            "priceNet": 1800,
+            "sortOrder": 0,
+            "active": True,
+        },
+        {
+            "type": "furtka",
+            "name": "Furtka",
+            "priceNet": 900,
+            "sortOrder": 1,
+            "active": True,
+        },
+    ],
+    "panelTextures": [],
+    "postTextures": [],
 }
 
 DEFAULT_PRICING_SETTINGS = {
     "basePricePerMeterNet": 300,
     "panelWidthCm": 200,
-    "gatePriceNet": 1800,
     "currency": "PLN",
 }
 

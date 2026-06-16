@@ -8,12 +8,17 @@ from app.models.catalog import (
     CatalogCollections,
     CollectionName,
     ColorOut,
+    ElementOut,
     HeightOut,
     PanelOut,
+    PanelTextureOut,
     PostOut,
+    PostTextureOut,
     SpacerOut,
 )
 from app.services.seed_data import SEED_DATA
+
+TEXTURE_COLLECTIONS = frozenset({"panelTextures", "postTextures"})
 
 
 def _doc_to_dict(doc) -> dict[str, Any]:
@@ -32,7 +37,7 @@ def fetch_collection(
     db = get_db()
     docs = db.collection(name).stream()
     items = [_doc_to_dict(d) for d in docs]
-    if active_only:
+    if active_only and name not in TEXTURE_COLLECTIONS:
         items = [i for i in items if i.get("active", False)]
     return _sort_items(items)
 
@@ -47,6 +52,13 @@ def fetch_active_catalog() -> CatalogCollections:
         ],
         heights=[HeightOut(**i) for i in fetch_collection("heights", active_only=True)],
         colors=[ColorOut(**i) for i in fetch_collection("colors", active_only=True)],
+        elements=[
+            ElementOut(**i) for i in fetch_collection("elements", active_only=True)
+        ],
+        panelTextures=[
+            PanelTextureOut(**i) for i in fetch_collection("panelTextures")
+        ],
+        postTextures=[PostTextureOut(**i) for i in fetch_collection("postTextures")],
     )
 
 
@@ -83,7 +95,7 @@ def delete_entity(name: CollectionName, doc_id: str) -> None:
 def seed_catalog() -> dict[str, int]:
     counts: dict[str, int] = {}
     for name in COLLECTION_NAMES:
-        items = SEED_DATA[name]
+        items = SEED_DATA.get(name, [])
         for item in items:
             create_entity(name, item)
         counts[name] = len(items)
