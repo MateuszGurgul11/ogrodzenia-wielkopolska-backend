@@ -1,5 +1,7 @@
 from typing import Any
 
+from google.cloud.firestore import DELETE_FIELD
+
 from app.firebase import get_db
 from app.models.catalog import (
     COLLECTION_NAMES,
@@ -79,10 +81,11 @@ def create_entity(name: CollectionName, data: dict) -> dict:
 def update_entity(name: CollectionName, doc_id: str, data: dict) -> dict:
     model = CREATE_MODELS[name](**data)
     db = get_db()
-    db.collection(name).document(doc_id).set(
-        model.model_dump(exclude_none=True),
-        merge=True,
-    )
+    payload: dict[str, Any] = model.model_dump(exclude_none=True)
+    for key, value in data.items():
+        if value is None:
+            payload[key] = DELETE_FIELD
+    db.collection(name).document(doc_id).set(payload, merge=True)
     out = OUT_MODELS[name](id=doc_id, **model.model_dump())
     return out.model_dump()
 
